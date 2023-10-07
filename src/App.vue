@@ -1,32 +1,37 @@
 <script setup>
 import HelloWorld from './components/HelloWorld.vue'
 import TheWelcome from './components/TheWelcome.vue'
-import Editor from "@toast-ui/editor";
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
+import {ref} from "vue";
 
-const editor = new Editor({
-  el: document.querySelector('#editor'),
-  height: '1000px',
-  initialEditType: 'markdown',
-  previewStyle: 'vertical'
-});// editor's Style
+const showHome = ref(false);
+
+// const editor = new Editor({
+//   el: document.querySelector('#editor'),
+//   height: '1000px',
+//   initialEditType: 'markdown',
+//   previewStyle: 'vertical'
+// });// editor's Style
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <!--  欢迎页-->
+  <div v-if="showHome">
+    <header>
+      <img alt="Vue logo" class="logo" height="125" src="./assets/logo.svg" width="125"/>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
+      <div class="wrapper">
+        <HelloWorld msg="You did it!"/>
+      </div>
+    </header>
 
-  <div id="editor"></div>
-
-  <main>
-    <TheWelcome />
-  </main>
+    <main>
+      <TheWelcome/>
+    </main>
+  </div>
+  <router-link to="/">Home</router-link>
+  <router-view/>
 </template>
 
 <style scoped>
