@@ -80,6 +80,13 @@ export const hash = async (message, confusion) => {
     return encryptedMessage;
 };
 
+
+/**
+ * Concatenates values of an object into a single string.
+ *
+ * @param {Object} obj - The object whose values to concatenate.
+ * @return {string} - The concatenated string of object values.
+ */
 export function concatObjectValues(obj) {
     let result = '';
     for (let key in obj) {
