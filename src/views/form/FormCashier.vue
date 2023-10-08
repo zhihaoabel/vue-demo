@@ -1,22 +1,25 @@
 <script setup>
 import {ref} from 'vue';
 import FormPlainField from "@/views/form/FormPlainInput.vue";
+import request from "@/utils/request";
+import {concatObjectValues, hash, objectValuesToString} from "@/utils/util";
 
-const formData = ref({
+// 收银台请求体
+const requestExample = ref({
       billingInformation: {
         country: 'US',
         email: 'test@qq.com'
       },
+      cardInfo: {
+        holderName: 'CL BRW2'
+      },
       merchantNo: '800209',
-      merchantTxnId: '1654675447655',
+      merchantTxnId: '',
       merchantTxnTime: '2022-03-08 16:04:07',
       merchantTxnTimeZone: '+08:00',
       orderAmount: '35',
       orderCurrency: 'USD',
       productType: 'CARD',
-      cardInfo: {
-        holderName: 'CL BRW2'
-      },
       shippingInformation: {
         country: 'US',
         email: 'test@qq.com'
@@ -28,14 +31,37 @@ const formData = ref({
         products: '[{"price":"110.00","num":"1","name":"iphone11","currency":"USD"}]'
       },
       txnType: 'SALE',
-      sign: ''
+      sign: '6e9b951d6d56d03f236a6ae6af1dce5e2546c06c1c555ee95b86aed09e713a8c'
     }
 );
 
-const submitForm = () => {
-  formData.value.merchantTxnId++;
+const submitForm = async () => {
   // Handle form submission logic here
-  console.log('Form submitted:', formData.value);
+
+  // 每次提交前清空sign
+  requestExample.value.sign = ''
+
+  // 生成随机merchantTxnId
+  requestExample.value.merchantTxnId = '' + Math.floor(Math.random() * 1000000000000);
+
+  // 获取签名
+  const tmp = concatObjectValues(requestExample.value);
+  requestExample.value.sign = await hash(tmp, '');
+
+  // 生成签名后的请求体
+  const req = objectValuesToString(requestExample.value)
+
+  // 提交表单
+  request.post('/api/txn/payment', req).then(res => {
+    console.log(res)
+    const {respCode, respMsg} = res;
+    if (respCode === '20000') {
+      const url = res.data.redirectUrl
+      window.open(url)
+    }else {
+      alert(respMsg)
+    }
+  });
 };
 </script>
 
@@ -47,34 +73,34 @@ const submitForm = () => {
       <h6>Billing Information</h6>
       <div class="mb-3 form-group">
         <label class="form-label" for="country">Country:</label>
-        <input id="country" v-model="formData.billingInformation.country" class="mx-lg-3 form-input" type="text"/>
+        <input id="country" v-model="requestExample.billingInformation.country" class="mx-lg-3 form-input" type="text"/>
       </div>
 
       <div class="mb-3 form-group">
         <label class="form-label" for="email">Email:</label>
-        <input id="email" v-model="formData.billingInformation.email" class="mx-lg-3 form-input" type="email"/>
+        <input id="email" v-model="requestExample.billingInformation.email" class="mx-lg-3 form-input" type="email"/>
       </div>
     </div>
 
     <!-- Merchant Information -->
-    <FormPlainField v-model="formData.merchantNo" fieldId="merchantNo" fieldLabel="Merchant No" fieldType="text"/>
+    <FormPlainField v-model="requestExample.merchantNo" fieldId="merchantNo" fieldLabel="Merchant No" fieldType="text"/>
 
-    <FormPlainField v-model="formData.merchantTxnId" fieldId="merchantTxnId" fieldLabel="Merchant Transaction ID"
+    <FormPlainField v-model="requestExample.merchantTxnId" fieldId="merchantTxnId" fieldLabel="Merchant Transaction ID"
                     fieldType="text"/>
 
-    <FormPlainField v-model="formData.merchantTxnTime" fieldId="merchantTxnTime" fieldLabel="Merchant Transaction Time"
+    <FormPlainField v-model="requestExample.merchantTxnTime" fieldId="merchantTxnTime" fieldLabel="Merchant Transaction Time"
                     fieldType="text"/>
 
-    <FormPlainField v-model="formData.merchantTxnTimeZone" fieldId="merchantTxnTimeZone"
+    <FormPlainField v-model="requestExample.merchantTxnTimeZone" fieldId="merchantTxnTimeZone"
                     fieldLabel="Merchant Transaction Time Zone" fieldType="text"/>
 
-    <FormPlainField v-model="formData.orderAmount" fieldId="orderAmount" fieldLabel="Order Amount"
+    <FormPlainField v-model="requestExample.orderAmount" fieldId="orderAmount" fieldLabel="Order Amount"
                     fieldType="text"/>
 
-    <FormPlainField v-model="formData.orderCurrency" fieldId="orderCurrency" fieldLabel="Order Currency"
+    <FormPlainField v-model="requestExample.orderCurrency" fieldId="orderCurrency" fieldLabel="Order Currency"
                     fieldType="text"/>
 
-    <FormPlainField v-model="formData.productType" fieldId="productType" fieldLabel="Product Type" fieldType="text"/>
+    <FormPlainField v-model="requestExample.productType" fieldId="productType" fieldLabel="Product Type" fieldType="text"/>
 
     <!-- Card Information -->
     <div>
@@ -82,7 +108,7 @@ const submitForm = () => {
         <h6>Card Information</h6>
         <div class="mb-3 form-group">
           <label class="form-label" for="holderName">Holder Name:</label>
-          <input id="holderName" v-model="formData.cardInfo.holderName" class="mx-lg-3 form-input" type="text"/>
+          <input id="holderName" v-model="requestExample.cardInfo.holderName" class="mx-lg-3 form-input" type="text"/>
         </div>
       </fieldset>
     </div>
@@ -94,19 +120,19 @@ const submitForm = () => {
 
         <div class="mb-3 form-group">
           <label class="form-label" for="shippingCountry">Country:</label>
-          <input id="shippingCountry" v-model="formData.shippingInformation.country" class="mx-lg-3 form-input"
+          <input id="shippingCountry" v-model="requestExample.shippingInformation.country" class="mx-lg-3 form-input"
                  type="text"/>
         </div>
 
         <div class="mb-3 form-group">
           <label class="form-label" for="shippingEmail">Email:</label>
-          <input id="shippingEmail" v-model="formData.shippingInformation.email" class="mx-lg-3 form-input"
+          <input id="shippingEmail" v-model="requestExample.shippingInformation.email" class="mx-lg-3 form-input"
                  type="email"/>
         </div>
       </fieldset>
     </div>
 
-    <FormPlainField v-model="formData.subProductType" fieldId="subProductType" fieldLabel="Sub Product Type"
+    <FormPlainField v-model="requestExample.subProductType" fieldId="subProductType" fieldLabel="Sub Product Type"
                     fieldType="text"/>
 
     <!-- Transaction Order Message -->
@@ -115,25 +141,25 @@ const submitForm = () => {
         <h6>Transaction Order Message</h6>
         <div class="mb-3 form-group">
           <label class="form-label" for="appId">App ID:</label>
-          <input id="appId" v-model="formData.txnOrderMsg.appId" class="mx-lg-3 form-input" type="text"/>
+          <input id="appId" v-model="requestExample.txnOrderMsg.appId" class="mx-lg-3 form-input" type="text"/>
         </div>
 
         <div class="mb-3 form-group">
           <label class="form-label" for="returnUrl">Return URL:</label>
-          <input id="returnUrl" v-model="formData.txnOrderMsg.returnUrl" class="mx-lg-3 form-input" type="text"/>
+          <input id="returnUrl" v-model="requestExample.txnOrderMsg.returnUrl" class="mx-lg-3 form-input" type="text"/>
         </div>
 
         <div class="mb-3 form-group">
           <label class="form-label" for="products">Products:</label>
-          <textarea id="products" v-model="formData.txnOrderMsg.products" class="mx-lg-3 form-input" type="text">
+          <textarea id="products" v-model="requestExample.txnOrderMsg.products" class="mx-lg-3 form-input" type="text">
           </textarea>
         </div>
       </fieldset>
     </div>
 
-    <FormPlainField v-model="formData.txnType" fieldId="txnType" fieldLabel="Txn Type" fieldType="text"/>
+    <FormPlainField v-model="requestExample.txnType" fieldId="txnType" fieldLabel="Txn Type" fieldType="text"/>
 
-    <FormPlainField v-model="formData.sign" fieldId="sign" fieldLabel="Sign" fieldType="text"/>
+    <FormPlainField v-model="requestExample.sign" fieldId="sign" fieldLabel="Sign" fieldType="text"/>
 
     <button class="submit-button border-primary rounded-2" type="submit">Submit</button>
 
@@ -141,7 +167,7 @@ const submitForm = () => {
     "respCode": "20000",
     "respMsg": "Success",
     "data": {
-        "transactionId": "1710930229176258560",
+        "transactionId": "1710930229176258559",
         "merchantTxnId": "1654675447655",
         "merchantNo": "800209",
         "responseTime": "",

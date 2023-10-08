@@ -4,6 +4,7 @@ import TheWelcome from './components/TheWelcome.vue'
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import {ref} from "vue";
+import LoadingComponent from "@/components/loading/LoadingComponent.vue";
 
 const showHome = ref(false);
 
@@ -30,6 +31,8 @@ const showHome = ref(false);
       <TheWelcome/>
     </main>
   </div>
+
+  <LoadingComponent/>
 
   <ul>
     <li>
