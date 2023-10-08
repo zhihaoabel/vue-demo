@@ -30,7 +30,15 @@ const showHome = ref(false);
       <TheWelcome/>
     </main>
   </div>
-  <router-link to="/">Home</router-link>
+
+  <ul>
+    <li>
+      <router-link to="/">Home</router-link>
+    </li>
+    <li>
+      <router-link to="/formCashier">FormCashier</router-link>
+    </li>
+  </ul>
   <router-view/>
 </template>
 
@@ -59,6 +67,18 @@ header {
     display: flex;
     place-items: flex-start;
     flex-wrap: wrap;
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+    padding-right: 2rem;
+  }
+
+  ul > li {
+    margin-bottom: 0.5rem;
+    color: #42b983;
   }
 }
 </style>

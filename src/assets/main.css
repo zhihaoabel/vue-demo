@@ -9,9 +9,9 @@
 }
 
 a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
+.green{
+  text-decoration: none !important;
+  color: hsla(160, 100%, 37%, 1)!important;
   transition: 0.4s;
 }
 
@@ -28,8 +28,8 @@ a,
   }
 
   #app {
+    max-width: 75%;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    grid-template-columns: 0.5fr 1.5fr;
   }
 }

@@ -86,5 +86,5 @@ import SupportIcon from './icons/IconSupport.vue'
       <a href="https://vuejs.org/sponsor/" rel="noopener" target="_blank">becoming a sponsor</a>.
     </WelcomeItem>
 
-  <router-link target="_blank" to="/form">Forms.</router-link>
+<!--  <router-link target="_blank" to="/form">Forms.</router-link>-->
 </template>
