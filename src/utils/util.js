@@ -32,7 +32,8 @@ export function getKeys(obj, prefix = 'formData') {
  * Hashes the provided message using the SHA-256 algorithm.
  *
  * @param {string} message - The message to be hashed.
- * @param {string} [confusion] - An optional string used for additional confusion. If not provided, Abel's private key will be used as the default value.
+ * @param {string} [confusion] - An optional string used for additional confusion. If not provided,
+ * Abel's private key will be used as the default value.
  * @returns {Promise<string>} The hashed message as a hexadecimal string.
  */
 export const hash = async (message, confusion) => {
