@@ -1,6 +1,6 @@
 <script setup>
 import {ref} from 'vue';
-import FormPlainField from "@/views/form/FormPlainInput.vue";
+import FormPlainField from "@/components/form/FormPlainInput.vue";
 import request from "@/utils/request";
 import {concatObjectValues, hash, objectValuesToString} from "@/utils/util";
 
@@ -27,7 +27,7 @@ const requestExample = ref({
       subProductType: 'DIRECT',
       txnOrderMsg: {
         appId: '1700077023031386112',
-        returnUrl: 'http://v1-demo.test.com/',
+        returnUrl: 'https://www.ronhan.com/',
         products: '[{"price":"110.00","num":"1","name":"iphone11","currency":"USD"}]'
       },
       txnType: 'SALE',
@@ -58,7 +58,7 @@ const submitForm = async () => {
     if (respCode === '20000') {
       const url = res.data.redirectUrl
       window.open(url)
-    }else {
+    } else {
       alert(respMsg)
     }
   });
@@ -88,7 +88,8 @@ const submitForm = async () => {
     <FormPlainField v-model="requestExample.merchantTxnId" fieldId="merchantTxnId" fieldLabel="Merchant Transaction ID"
                     fieldType="text"/>
 
-    <FormPlainField v-model="requestExample.merchantTxnTime" fieldId="merchantTxnTime" fieldLabel="Merchant Transaction Time"
+    <FormPlainField v-model="requestExample.merchantTxnTime" fieldId="merchantTxnTime"
+                    fieldLabel="Merchant Transaction Time"
                     fieldType="text"/>
 
     <FormPlainField v-model="requestExample.merchantTxnTimeZone" fieldId="merchantTxnTimeZone"
@@ -100,7 +101,8 @@ const submitForm = async () => {
     <FormPlainField v-model="requestExample.orderCurrency" fieldId="orderCurrency" fieldLabel="Order Currency"
                     fieldType="text"/>
 
-    <FormPlainField v-model="requestExample.productType" fieldId="productType" fieldLabel="Product Type" fieldType="text"/>
+    <FormPlainField v-model="requestExample.productType" fieldId="productType" fieldLabel="Product Type"
+                    fieldType="text"/>
 
     <!-- Card Information -->
     <div>
