@@ -69,19 +69,12 @@ const submitForm = async () => {
 </script>
 
 <template>
-  <div class="card-container">
+  <div class="card-container border-top rounded-2">
     <slot name="card"/>
     <button class="btn btn-dark" @click="submitForm">{{ buttonText }}</button>
   </div>
 </template>
 
 <style scoped>
-.card-container {
-  display: flex;
-  flex-direction: column;
-}
 
-.card-container button {
-  align-self: center;
-}
 </style>

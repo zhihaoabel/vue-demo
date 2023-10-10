@@ -1,114 +1,147 @@
 class PacypayCheckout {
-    constructor(config, instanceConfig = {}) {
-        if (!config) {
+    constructor(transactionId, options = {}) {
+        if (!transactionId) {
             throw new Error("Pacypay -> transactionId is null!");
         }
 
-        this.container = instanceConfig.container || 'pacypay_checkout';
-        this.onPaymentCompleted = instanceConfig.onPaymentCompleted;
-        this.onError = instanceConfig.onError;
+        this.container = options.container || "pacypay_checkout";
+        this.onPaymentCompleted = options.onPaymentCompleted;
+        this.onError = options.onError;
+
         this._initContainerHeight = 0;
-
-        this.createCheckout(instanceConfig, config);
+        this.createCheckout(options, transactionId);
     }
 
-    static version = '1.0.5';
-
-    static createIframe(options) {
-        const { src, title = 'pacypay iframe', policy = 'origin', styleStr = 'border: none; height:100%; width:100%; overflow:hidden;' } = options;
-        const iframe = document.createElement('iframe');
-        iframe.setAttribute('src', src);
-        iframe.setAttribute('class', 'pacypay-iframe');
-        title === '' || title.trim().length === 0 || title.toLowerCase() === 'none' ? iframe.setAttribute('role', 'presentation') : iframe.setAttribute('title', title);
-        iframe.setAttribute('allowtransparency', 'true');
-        iframe.setAttribute('style', styleStr);
-        iframe.setAttribute('referrerpolicy', policy);
-        iframe.setAttribute('scrolling', 'no');
-        const fallbackContent = document.createTextNode("<p>Your browser does not support iframes.</p>");
-        iframe.appendChild(fallbackContent);
-        return iframe;
+    static get version() {
+        return "1.0.5";
     }
 
-    createCheckout(config, transactionId) {
+    createCheckout(options, transactionId) {
+        let config = {};
         try {
-            const merchant = this.checkMerchant(config.environment);
-            const container = document.getElementById(this.container);
-            this._initContainerHeight = container.scrollHeight;
+            config = this.checkMerchant(options.environment);
+            const containerElement = document.getElementById(this.container);
+            this._initContainerHeight = containerElement.scrollHeight;
 
-            const iframe = PacypayCheckout.createIframe({
-                src: merchant.iframeUrl,
-            });
+            const iframeElement = this.createIframe(config.iframeUrl);
+            containerElement.innerHTML = "";
+            containerElement.appendChild(iframeElement);
 
-            container.innerHTML = '';
-            container.appendChild(iframe);
+            window.removeEventListener("message", this.handleMessage, true);
+            window.addEventListener("message", this.handleMessage, true);
 
-            window.removeEventListener('message', this.handleMessage, true);
-            window.addEventListener('message', this.handleMessage.bind(this), true);
+            iframeElement.onload = () => {
+                if (options.config) {
+                    options.config.subProductType
+                        ? (options.config.paymentMethod = options.config.subProductType)
+                        : (options.config.paymentMethod = "card");
 
-            iframe.onload = () => {
-                config.config = config.config || {};
-                config.config.transactionId = transactionId;
-                config.config.originUrl = window.location.origin;
+                    options.config.checkoutTheme ||
+                    (options.config.checkoutTheme = "light");
+                    options.config.showPayButton =
+                        typeof options.config.showPayButton !== "boolean" ||
+                        !!options.config.showPayButton;
+                    options.config.buttonSeparation =
+                        typeof options.config.buttonSeparation !== "boolean" ||
+                        !!options.config.buttonSeparation;
+                    options.config.displayBillingInformation =
+                        typeof options.config.displayBillingInformation !== "boolean" ||
+                        !!options.config.displayBillingInformation;
 
-                config.config.paymentMethod = config.config.subProductType ? config.config.subProductType : 'card';
+                    options.config.locale = options.locale;
+                } else {
+                    options.config = {
+                        paymentMethod: "card",
+                        checkoutTheme: "light",
+                        showPayButton: true,
+                        buttonSeparation: true,
+                        displayBillingInformation: true,
+                        locale: options.locale,
+                    };
+                }
 
-                ['checkoutTheme', 'showPayButton', 'buttonSeparation', 'displayBillingInformation'].forEach((prop) => {
-                    config.config[prop] = typeof config.config[prop] === 'boolean' ? config.config[prop] : true;
-                });
+                options.config.transactionId = transactionId;
+                options.config.originUrl = window.location.origin;
 
-                config.config.locale = config.locale;
-
-                this.postMessage('pacypay_theme', JSON.stringify(config.config));
+                this.postMessage("pacypay_theme", JSON.stringify(options.config));
             };
         } catch (error) {
-            if (this.onError) {
-                this.onError(error);
-            }
+            this.onError && this.onError(error);
         }
     }
 
     checkMerchant(environment) {
-        return {
-            iframeUrl: this.getIframeUrl(environment),
-        };
+        return {iframeUrl: this.getIframeUrl(environment)};
+    }
+
+    submit(data = {}) {
+        this.postMessage("pacypay_checkout_submit", data);
+    }
+
+    onChangeWH(data) {
+        const height = JSON.parse(data).height;
+        const newHeight =
+            this._initContainerHeight < height ? height : this._initContainerHeight;
+
+        document.getElementById(this.container).style.height = `${newHeight}px`;
     }
 
     getIframeUrl(environment) {
         const urls = {
-            sandbox: 'https://sandbox-v3-checkout-sdk.pacypay.com',
-            production: 'https://v3-checkout-sdk.pacypay.com',
+            sandbox: "https://sandbox-v3-checkout-sdk.pacypay.com",
+            production: "https://v3-checkout-sdk.pacypay.com",
         };
-        return urls[environment.toLowerCase()] || urls.production;
+        return urls[environment.toLowerCase()] || urls.sandbox;
     }
 
-    static postMessage(action, data) {
-        if (a && a.contentWindow) {
-            a.contentWindow.postMessage({ action, data }, '*');
+    createIframe(src) {
+        const title = "pacypay iframe";
+        const policy = "origin";
+        const styleStr = "border: none; height:100%; width:100%; overflow:hidden;";
+
+        const iframe = document.createElement("iframe");
+        iframe.setAttribute("src", src);
+        iframe.setAttribute("class", "pacypay-iframe");
+
+        if (title === "" || title.trim().length === 0 || title.toLowerCase() === "none") {
+            iframe.setAttribute("role", "presentation");
+        } else {
+            iframe.setAttribute("title", title);
         }
+
+        iframe.setAttribute("allowtransparency", "true");
+        iframe.setAttribute("style", styleStr);
+        iframe.setAttribute("referrerpolicy", policy);
+        iframe.setAttribute("scrolling", "no");
+
+        const textNode = document.createTextNode("<p>Your browser does not support iframes.</p>");
+        iframe.appendChild(textNode);
+
+        return iframe;
     }
 
     handleMessage(event) {
-        const data = event.data || {};
-        const action = data.action;
-        const payload = data.data;
+        console.log(event, 333)
+        const {data} = event;
+        const {action, data: eventData} = data || {};
 
         switch (action) {
-            case 'pacypay_checkout_success':
-                if (this.onPaymentCompleted) {
-                    this.onPaymentCompleted(JSON.parse(payload));
-                }
+            case "pacypay_checkout_success":
+                this.onPaymentCompleted && this.onPaymentCompleted(JSON.parse(eventData));
                 break;
-            case 'pacypay_checkout_error':
-                if (this.onError) {
-                    this.onError(payload);
-                }
+            case "pacypay_checkout_error":
+                this.onError && this.onError(eventData);
                 break;
-            case 'pacypay_checkout_wh':
-                if (this.onChangeWH) {
-                    this.onChangeWH(payload);
-                }
+            case "pacypay_checkout_wh":
+                this.onChangeWH && this.onChangeWH(eventData);
                 break;
         }
+    }
+
+    postMessage(action, data) {
+        const a = document.querySelector("iframe.pacypay-iframe");
+        a && a.contentWindow.postMessage({action, data}, "*");
+        a && a.parentNode.setAttribute("style", "height: 500px");
     }
 }
 
