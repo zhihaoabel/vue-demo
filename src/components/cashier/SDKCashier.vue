@@ -1,19 +1,35 @@
 <script setup>
-import {onMounted} from "vue";
+import {onMounted, ref} from "vue";
 import PacypayCheckout from "@/js/pacypay";
 import InfoCard from "@/components/card/InfoCard.vue";
 
-const container = 'pacypay_checkout';
-const onPaymentCompleted = null;
-const onError = null;
-const _initContainerHeight = 0;
-
 onMounted(() => {
-  new PacypayCheckout('1701511690996621312', {
+  // Token下单
+  const requestExample = ref({
+        "merchantNo":"800035",
+        "merchantTxnId":"1654675447527",
+        "merchantTxnTime":null,
+        "merchantTxnTimeZone":null,
+        "merchantCustId":"custId_1640247522000",
+        "productType":"CARD",
+        "subProductType":"TOKEN",
+        "txnType":"SALE",
+        "orderAmount":"1.23",
+        "orderCurrency":"USD",
+        "originTransactionId":null,
+        "risk3dsStrategy":null,
+        "txnOrderMsg":"{\"returnUrl\":\"https://www.ronhan.com/\",\"products\":\"[{\\\"name\\\":\\\"iphone 11\\\",\\\"price\\\":\\\"5300.00\\\",\\\"num\\\":\\\"2\\\",\\\"currency\\\":\\\"CNY\\\"},{\\\"name\\\":\\\"macBook\\\",\\\"price\\\":\\\"1234.00\\\",\\\"num\\\":\\\"1\\\",\\\"currency\\\":\\\"USD\\\"}]\",\"transactionIp\":\"127.0.0.1\",\"appId\":1451012088483221504,\"javaEnabled\":false,\"colorDepth\":\"24\",\"screenHeight\":\"1080\",\"screenWidth\":\"1920\",\"timeZoneOffset\":\"-480\",\"accept\":\"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9\",\"userAgent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\",\"contentLength\":\"340\",\"language\":null}",
+        "shippingInformation":"{\"firstName\":\"Shipping\",\"lastName\":\"Name\",\"phone\":\"188888888888\",\"email\":\"taoyun15@gmail.com\",\"postalCode\":\"888888\",\"address\":\"Shipping Address Test\",\"country\":\"CN\",\"province\":\"HB\",\"city\":\"WH\",\"street\":\"833 Cheung Sha Wan Road\",\"number\":\"1\",\"identityNumber\":\"82962612865\"}","billingInformation":"{\"firstName\":\"test\",\"lastName\":\"test\",\"phone\":\"18600000000\",\"email\":\"taoyun15@gmail.com\",\"postalCode\":\"430000\",\"address\":\"Unit 1113, 11/F, Tower 2, Cheung Sha Wan Plaza, 833 Cheung Sha Wan Road, Lai Chi Kok\",\"country\":\"CN\",\"province\":\"HB\",\"city\":\"HK\"}",
+        "sign":"..."
+      }
+  );
+
+  new PacypayCheckout("1712054966069719040"
+      , {
     locale: 'zh-cn', // en zh-cn ar de es fi fr it ja ko nl no pl pt ru sv th zh-tw
     environment: 'sandbox', // sandbox、production
     config: {
-      subProductType: 'DIRECT', // DIRECT-直接支付，TOKEN-token绑卡并支付（必须和下单接口中subProductType值保持一致）
+      subProductType: 'TOKEN', // DIRECT-直接支付，TOKEN-token绑卡并支付（必须和下单接口中subProductType值保持一致）
       checkoutTheme: 'light', // light、dark
       customCssURL: '', // 自定义样式链接地址，配置该值后，checkoutTheme 则无效
       variables: {
@@ -63,8 +79,9 @@ onMounted(() => {
 <template>
   <div class="js-sdk-cashier card-container border-top rounded-2">
     <InfoCard card-header="JS-SDK收银台"
-              card-text="测试卡号信息如下：`4111111111111111`，`12/25`，`123``"
-              card-title=""/>
+              card-text="测试卡号信息如下：`4111111111111111`，`12/25`，`123`"
+              card-title="">
+    </InfoCard>
     <div id='pacypay_checkout'></div>
   </div>
 </template>

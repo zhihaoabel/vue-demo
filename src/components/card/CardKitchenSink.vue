@@ -4,63 +4,97 @@ import IconWallet from "@/components/icons/IconWallet.vue";
 import IconVisa from "@/components/icons/IconVisa.vue";
 import IconMasterCard from "@/components/icons/IconMasterCard.vue";
 import IconDiscover from "@/components/icons/IconDiscover.vue";
+import ListItem from "@/components/list/ListItem.vue";
+import CardBody from "@/components/card/CardBody.vue";
+import DefaultSelect from "@/components/Select/DefaultSelect.vue";
 </script>
 
 <template>
   <div class="card-container border-top rounded-2">
-    <div class="title-info">
-      <h6>Payment Method</h6>
-      <span class="title-description">All transactions are secure and encrypted</span>
-    </div>
-    <div class="card" style="width: 18rem;">
-      <!--      <img class="card-img-top" src="..." alt="Card image cap">-->
-      <div class="card-body">
-        <!--        <h5 class="card-title">Card title</h5>-->
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-          content.</p>
-      </div>
+    <div class="card">
+
+      <CardBody
+          card-class="card-body"
+          card-header=""
+          card-header-class="card-header"
+          card-text="All transactions are secure and encrypted." card-title="Payment method">
+        <template #img>
+          <img alt="Card image cap" class="card-img-top"
+               src="https://sandbox-v3-doc.pacypay.com/images/logo-f18b010b.png">
+        </template>
+      </CardBody>
+
       <ul class="list-group list-group-flush">
-        <li class="list-group-item">
-          <IconWallet/>
-          <span>Credit & Debit Card</span>
-          <IconVisa/>
-          <IconMasterCard/>
-          <IconDiscover/>
-        </li>
-        <li class="list-group-item">Dapibus ac facilisis in</li>
-        <li class="list-group-item">Vestibulum at eros</li>
+        <ListItem list-group-item-class="list-group-item">
+          <div class="credit-card">
+            <IconWallet/>
+            <span>Credit & Debit Card</span>
+            <span>
+              <IconVisa/>
+              <IconMasterCard/>
+              <IconDiscover/>
+            </span>
+          </div>
+        </ListItem>
+
+        <ListItem list-group-item-class="list-group-item bg-body-secondary">
+          <form action="sumbit" class="g-3">
+            <div class="my-3">
+              <input id="formGroupExampleInput" class="col form-control text-sm" placeholder="Card Number" type="text">
+            </div>
+
+            <div class="row my-3">
+              <div class="col">
+                <input aria-label="First name" class="form-control" placeholder="Expiration Date(MM/YY)" type="text">
+              </div>
+              <div class="col">
+                <input aria-label="Last name" class="form-control" placeholder="Security Code(CVV)" type="text">
+              </div>
+            </div>
+
+            <div class="row my-3">
+              <div class="col">
+                <input aria-label="First name" class="form-control" placeholder="Cardholder First Name" type="text">
+              </div>
+              <div class="col">
+                <input aria-label="Last name" class="form-control" placeholder="Cardholder Last Name" type="text">
+              </div>
+            </div>
+          </form>
+        </ListItem>
+
+        <ListItem list-group-item-class="list-group-item">
+          <div class="d-flex flex-column">
+<!--            <CardBody card-class="my-3"-->
+<!--                      card-header=""-->
+<!--                      card-header-class=''-->
+<!--                      card-text="Select the address that matches your card or payment method."-->
+<!--                      card-title="Billing Address"/>-->
+<!--            <DefaultSelect aria-label="Billing Address" select-class="form-select form-select-sm">-->
+<!--              <option value="1">Same as shipping address</option>-->
+<!--              <option value="0">New billing address</option>-->
+<!--            </DefaultSelect>-->
+            <button class="btn btn-primary mt-5 " type="submit"> Complete Order</button>
+          </div>
+        </ListItem>
       </ul>
-      <div class="card-body">
-        <a class="card-link" href="#">Card link</a>
-        <a class="card-link" href="#">Another link</a>
-      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.title-info {
+
+.list-group .credit-card {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin-bottom: 10px;
-}
-
-.title-info h6 {
-  color: #000000;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.title-info .title-description {
-  font-size: 12px;
-  color: var(--vt-c-text-light-2);
+  justify-content: space-around;
 }
 
 .list-group .list-group-item {
   display: flex;
   align-items: center;
   justify-items: center;
+
 }
 
 .list-group .list-group-item span {

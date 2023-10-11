@@ -121,7 +121,6 @@ class PacypayCheckout {
     }
 
     handleMessage(event) {
-        console.log(event, 333)
         const {data} = event;
         const {action, data: eventData} = data || {};
 

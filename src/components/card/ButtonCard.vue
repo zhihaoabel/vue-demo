@@ -13,11 +13,10 @@ const requestExample = ref({
         country: 'US',
         email: 'test@qq.com'
       },
-      cardInfo: {
-        holderName: 'CL BRW2'
-      },
+      cardInfo: {},
+      merchantCustId: 'custId_1640247522000',
       merchantNo: '800209',
-      merchantTxnId: '',
+      merchantTxnId: '1654675447700',
       merchantTxnTime: '2022-03-08 16:04:07',
       merchantTxnTimeZone: '+08:00',
       orderAmount: '35',
@@ -27,7 +26,7 @@ const requestExample = ref({
         country: 'US',
         email: 'test@qq.com'
       },
-      subProductType: 'DIRECT',
+      subProductType: 'TOKEN',
       txnOrderMsg: {
         appId: '1700077023031386112',
         returnUrl: 'https://www.ronhan.com/',
