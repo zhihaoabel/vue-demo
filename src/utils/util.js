@@ -1,3 +1,5 @@
+import request from "@/utils/request";
+
 /**
  * Function to recursively get all keys from an object,
  * including nested keys in the format 'parent.child'
@@ -121,3 +123,51 @@ export function objectValuesToString(obj) {
     }
     return obj;
 }
+
+
+/**
+ * Generates a sign for the given `requestBody`.
+ *
+ * @param {Object} requestBody - The request body object.
+ * @returns {Promise<string>} A Promise that resolves with the generated sign.
+ */
+export async function generateSign(requestBody) {
+    // 每次提交前清空sign
+    requestBody.value.sign = ''
+
+    // 生成随机merchantTxnId
+    requestBody.value.merchantTxnId = '' + Math.floor(Math.random() * 1000000000000)
+
+    // 获取签名
+    const tmp = concatObjectValues(requestBody.value);
+    return await hash(tmp, '');
+}
+
+
+
+/**
+ * Async function to make a payment.
+ *
+ * @param {string} uri - The URI to send the payment request to.
+ * @param {object} requestBody - The payment request body.
+ * @returns {Promise<void>} - A promise that resolves when the payment is made.
+ */
+export const makePayment = async (uri , requestBody ) => {
+    // 生成签名
+    requestBody.value.sign = await generateSign(requestBody)
+
+    // 生成签名后的请求体
+    const req = objectValuesToString(requestBody.value)
+
+    // 提交表单
+    request.post(uri, req).then(res => {
+        console.log(res)
+        const {respCode, respMsg} = res;
+        if (respCode === '20000') {
+            const url = res.data.redirectUrl
+            window.open(url)
+        } else {
+            alert(respMsg)
+        }
+    });
+};

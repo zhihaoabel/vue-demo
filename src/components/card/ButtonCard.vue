@@ -1,13 +1,13 @@
 <script setup>
 // 收银台请求体
-import request from "@/utils/request";
-import {concatObjectValues, hash, objectValuesToString} from "@/utils/util";
+import {makePayment} from "@/utils/util";
 import {ref} from "vue";
 
 defineProps({
   buttonText: String
 })
 
+const uri = '/api/txn/payment';
 const requestExample = ref({
       billingInformation: {
         country: 'US',
@@ -16,7 +16,7 @@ const requestExample = ref({
       cardInfo: {},
       merchantCustId: 'custId_1640247522000',
       merchantNo: '800209',
-      merchantTxnId: '1654675447700',
+      merchantTxnId: '', //随机生成
       merchantTxnTime: '2022-03-08 16:04:07',
       merchantTxnTimeZone: '+08:00',
       orderAmount: '35',
@@ -37,40 +37,16 @@ const requestExample = ref({
     }
 );
 
-const submitForm = async () => {
-  // Handle form submission logic here
+// 发起支付
+makePayment(uri, requestExample)
 
-  // 每次提交前清空sign
-  requestExample.value.sign = ''
 
-  // 生成随机merchantTxnId
-  requestExample.value.merchantTxnId = '' + Math.floor(Math.random() * 1000000000000);
-
-  // 获取签名
-  const tmp = concatObjectValues(requestExample.value);
-  requestExample.value.sign = await hash(tmp, '');
-
-  // 生成签名后的请求体
-  const req = objectValuesToString(requestExample.value)
-
-  // 提交表单
-  request.post('/api/txn/payment', req).then(res => {
-    console.log(res)
-    const {respCode, respMsg} = res;
-    if (respCode === '20000') {
-      const url = res.data.redirectUrl
-      window.open(url)
-    } else {
-      alert(respMsg)
-    }
-  });
-};
 </script>
 
 <template>
   <div class="card-container border-top rounded-2">
     <slot name="card"/>
-    <button class="btn btn-dark" @click="submitForm">{{ buttonText }}</button>
+    <button class="btn btn-dark" @click="makePayment">{{ buttonText }}</button>
   </div>
 </template>
 
