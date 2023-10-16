@@ -95,7 +95,7 @@ export function concatObjectValues(obj) {
         if (typeof obj[key] === 'object' && obj[key] !== null) {
             // If the value is an object, concatenate its values
             result += JSON.stringify(obj[key]);
-        } else if (obj.hasOwnProperty(key)) {
+        } else if (obj.hasOwnProperty(key) && obj[key] !== null) {
             // If the value is not an object, directly concatenate it
             result += obj[key];
         }
@@ -108,11 +108,18 @@ export function concatObjectValues(obj) {
  * Converts all object values to string using JSON.stringify.
  *
  * @param {Object} obj - The object to convert.
- * @return {Object} - The object with all values converted to string.
+ * @param optionals - The optional fields to be filtered out.
+ * @return {Object} - The object with values of required fields converted to string.
  */
-export function objectValuesToString(obj) {
+export function objectValuesToString(obj, optionals = []) {
     // Iterating over properties of the object
     for (let key in obj) {
+
+        // skip this key and move to next iteration
+        if (optionals.includes(key)) {
+            continue;
+        }
+
         // Checking if the object has the property to avoid inherited properties
         if (obj.hasOwnProperty(key)) {
             // If the value of the property is an object, convert it to string using JSON.stringify
@@ -124,6 +131,15 @@ export function objectValuesToString(obj) {
     return obj;
 }
 
+export const sortFields = (obj) => {
+    let result = {};
+    let keys = Object.keys(obj).sort();
+    for (let key of keys) {
+        result[key] = obj[key];
+    }
+    return result;
+};
+
 
 /**
  * Generates a sign for the given `requestBody`.
@@ -131,18 +147,25 @@ export function objectValuesToString(obj) {
  * @param {Object} requestBody - The request body object.
  * @returns {Promise<string>} A Promise that resolves with the generated sign.
  */
-export async function generateSign(requestBody) {
+export const generateSign = async (requestBody) => {
+    // 将requestBody字段升序排序
+    const sortedRequestBody = sortFields(requestBody)
+
     // 每次提交前清空sign
-    requestBody.value.sign = ''
+    sortedRequestBody.sign = ''
 
     // 生成随机merchantTxnId
-    requestBody.value.merchantTxnId = '' + Math.floor(Math.random() * 1000000000000)
+    requestBody.merchantTxnId = '' + Math.floor(Math.random() * 1000000000000)
+    sortedRequestBody.merchantTxnId = requestBody.merchantTxnId
+
+    // 拼接参数值
+    const tmp = concatObjectValues(sortedRequestBody);
 
     // 获取签名
-    const tmp = concatObjectValues(requestBody.value);
-    return await hash(tmp, '');
-}
-
+    return hash(tmp, '').then((sign) => {
+        return sign;
+    });
+};
 
 
 /**
@@ -150,24 +173,16 @@ export async function generateSign(requestBody) {
  *
  * @param {string} uri - The URI to send the payment request to.
  * @param {object} requestBody - The payment request body.
+ * @param filter 需要过滤的非必签名字段
  * @returns {Promise<void>} - A promise that resolves when the payment is made.
  */
-export const makePayment = async (uri , requestBody ) => {
+export const makePayment = async (uri, requestBody, filter = []) => {
     // 生成签名
-    requestBody.value.sign = await generateSign(requestBody)
+    requestBody.sign = await generateSign(requestBody, filter);
 
     // 生成签名后的请求体
-    const req = objectValuesToString(requestBody.value)
+    const req = objectValuesToString(requestBody);
 
     // 提交表单
-    request.post(uri, req).then(res => {
-        console.log(res)
-        const {respCode, respMsg} = res;
-        if (respCode === '20000') {
-            const url = res.data.redirectUrl
-            window.open(url)
-        } else {
-            alert(respMsg)
-        }
-    });
+    return request.post(uri, req);
 };

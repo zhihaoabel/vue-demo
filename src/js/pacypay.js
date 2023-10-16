@@ -8,6 +8,8 @@ class PacypayCheckout {
         this.onPaymentCompleted = options.onPaymentCompleted;
         this.onError = options.onError;
 
+        this.handleMessage = this.handleMessage.bind(this);
+
         this._initContainerHeight = 0;
         this.createCheckout(options, transactionId);
     }

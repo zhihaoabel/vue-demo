@@ -15,6 +15,7 @@
     "bootstrap": "^5.3.2",
     "bootstrap-icons": "^1.11.1",
     "crypto-js": "^4.1.1",
+    "element-plus": "^2.3.14",
     "vue": "^3.3.4",
     "vue-cryptojs": "^2.4.3",
     "vue-router": "^4.2.5"
@@ -23,6 +24,8 @@
     "@playwright/test": "^1.38.0",
     "@vitejs/plugin-vue": "^4.3.4",
     "sass": "^1.69.0",
+    "unplugin-auto-import": "^0.16.6",
+    "unplugin-vue-components": "^0.25.2",
     "vite": "^4.4.9"
   }
 }
