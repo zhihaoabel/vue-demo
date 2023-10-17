@@ -3,7 +3,6 @@ import {onBeforeMount, onMounted, ref} from "vue";
 import PacypayCheckout from "@/js/pacypay";
 import InfoCard from "@/components/card/InfoCard.vue";
 import {makePayment} from "@/utils/util";
-import error from "@icon-park/vue-next/lib/icons/Error";
 
 let alertText = '';
 const showSuccess = ref(false);
