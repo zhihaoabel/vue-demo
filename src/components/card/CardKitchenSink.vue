@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from "vue";
+import {ref, onMounted} from "vue";
 
 import IconWallet from "@/components/icons/IconWallet.vue";
 import IconVisa from "@/components/icons/IconVisa.vue";
@@ -8,9 +8,10 @@ import IconDiscover from "@/components/icons/IconDiscover.vue";
 import ListItem from "@/components/list/ListItem.vue";
 import CardBody from "@/components/card/CardBody.vue";
 import {makePayment} from "@/utils/util";
-import LocalPayment from "@/components/card/LocalPayment.vue";
+import CreditCardPayment from "@/components/card/LocalPayment.vue";
+import IconKlarna from "@/components/icons/IconKlarna.vue";
 
-const uri = ref('/v1/txn/doTransaction');
+const uri = ref('/api/v1/txn/doTransaction');
 const requestExample = ref({
   merchantNo: "800209",
   merchantTxnId: "16460431556929",
@@ -47,6 +48,8 @@ const cardInfo = ref({
 })
 
 const showCreditCard = ref(false);
+const showKlarna = ref(true);
+const filter = [];
 
 // 发起支付
 const submitForm = () => {
@@ -62,14 +65,6 @@ const submitForm = () => {
     }
   })
 };
-
-const checkRadio = ((e) => {
-  if (!showCreditCard.value) {
-    showCreditCard.value = true
-    // 给id为 credit-debit-card-radio 的input添加checked属性
-    document.getElementById('credit-debit-card-radio').setAttribute('checked', 'checked')
-  }
-})
 </script>
 
 <template>
@@ -90,8 +85,8 @@ const checkRadio = ((e) => {
       <ul class="list-group list-group-flush">
         <!--信用卡支付-->
         <ListItem list-group-item-class="list-group-item">
-          <LocalPayment aria-label-text="credit debit card radio" payment-class="credit-card"
-                        payment-name="Credit & Debit Card" @click.native="checkRadio">
+          <CreditCardPayment v-model:show-content=showCreditCard aria-label-text="credit debit card radio"
+                             payment-class="credit-card" payment-name="Credit & Debit Card">
             <template #presiding-icon>
               <IconWallet/>
             </template>
@@ -100,9 +95,7 @@ const checkRadio = ((e) => {
               <span class="card-mastercard mx-0"><IconMasterCard/></span>
               <span class="card-discover mx-0"><IconDiscover/></span>
             </template>
-          </LocalPayment>
-          <template>
-            <ListItem v-if="showCreditCard" list-group-item-class="list-group-item bg-body-secondary">
+            <ListItem v-if=showCreditCard list-group-item-class="list-group-item bg-body-secondary">
               <form class="g-3">
                 <div class="my-3">
                   <input id="cardNumber" v-model="cardNumber" class="col form-control"
@@ -133,10 +126,18 @@ const checkRadio = ((e) => {
                 </div>
               </form>
             </ListItem>
-          </template>
+          </CreditCardPayment>
+
+          <CreditCardPayment v-model:show-content=showKlarna payment-name="Klarna" aria-label-text="klarna radio" payment-class="klarna">
+            <template #payment-icons>
+              <span class="card-visa mx-0"><IconVisa/></span>
+              <span class="card-mastercard mx-0"><IconMasterCard/></span>
+              <span class="card-discover mx-0"><IconDiscover/></span>
+            </template>
+          </CreditCardPayment>
         </ListItem>
 
-        <!--        本地支付-->
+
         <button class="btn btn-primary m-3" type="submit" @click="submitForm">Complete Order</button>
       </ul>
     </div>
@@ -144,13 +145,6 @@ const checkRadio = ((e) => {
 </template>
 
 <style scoped>
-
-.list-group .paymentClass {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  cursor: pointer;
-}
 
 .list-group .list-group-item span {
   font-family: 'Malgun Gothic', 'Open Sans', 'Nanum Barun Gothic', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕', '맑은고딕', 'Malgun Gothic', sans-serif;
