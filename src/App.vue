@@ -34,14 +34,14 @@ const showHome = ref(false);
 
   <LoadingComponent/>
 
-  <ul>
-    <li>
-      <router-link to="/">Home</router-link>
-    </li>
-    <li>
-      <router-link to="/formCashier">FormCashier</router-link>
-    </li>
-  </ul>
+<!--  <ul>-->
+<!--    <li>-->
+<!--      <router-link to="/">Home</router-link>-->
+<!--    </li>-->
+<!--    <li>-->
+<!--      <router-link to="/formCashier">FormCashier</router-link>-->
+<!--    </li>-->
+<!--  </ul>-->
   <router-view/>
 </template>
 

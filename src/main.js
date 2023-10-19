@@ -5,13 +5,14 @@ import {createApp} from 'vue'
 import App from './App.vue'
 import {createRouter, createWebHistory} from 'vue-router'
 
-import FormCashier from "@/views/form/FormCashier.vue"
+import FormCashier from "@/components/form/FormCashier.vue"
 import Home from "@/components/Home.vue";
 
 // set up the routes
 const routes = [
     {path: '/', component: Home},
-    {path: '/formCashier', component: FormCashier}
+    {path: '/formCashier', component: FormCashier},
+    {path: '/cashier', component: FormCashier},
 ]
 
 // assuming routes are defined as per step 1

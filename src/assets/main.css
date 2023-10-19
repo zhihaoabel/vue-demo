@@ -28,8 +28,8 @@ a,
   }
 
   #app {
-    max-width: 75%;
+    max-width: 90%;
     display: grid;
-    grid-template-columns: 0.5fr 1.5fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
