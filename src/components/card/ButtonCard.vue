@@ -1,9 +1,14 @@
 <script setup>
 import {makePayment} from "@/utils/util";
 import {ref} from "vue";
+import InfoCard from "./InfoCard.vue";
 
 defineProps({
-  buttonText: String,
+  buttonText: {
+    type: String,
+    default: 'Pay Now'
+  },
+
 })
 
 const uri = ref('/api/txn/payment');
@@ -70,7 +75,7 @@ const submitForm = () => {
         title="System Error"
         type="error"
     />
-    <slot name="card"/>
+    <info-card card-text="点击下方的支付按钮即可跳转Pacypay收银台" card-title="" card-header="Onerway收银台"/>
     <button class="btn btn-dark" @click="submitForm">{{ buttonText }}</button>
   </div>
 </template>

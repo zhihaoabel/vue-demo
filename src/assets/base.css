@@ -83,6 +83,9 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+li {
+    list-style: none;
+}
 
 .card-container {
     font-size: 13px;
