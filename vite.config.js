@@ -20,6 +20,11 @@ export default defineConfig({
     plugins: [
         vue(),
         AutoImport({
+            include: [
+                /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
+                /\.vue$/, /\.vue\?vue/, // .vue
+                /\.md$/, // .md
+            ],
             resolvers: [ElementPlusResolver()],
         }),
         Components({

@@ -1,9 +1,14 @@
 <script setup>
 
-import IconDiscover from "./icons/IconDiscover.vue";
-import IconCommunity from "./icons/IconCommunity.vue";
-import IconDocumentation from "./icons/IconDocumentation.vue";
 import IconTooling from "./icons/IconTooling.vue";
+import {useRouter} from "vue-router";
+import TreeMenu from "@/components/menu/TreeMenu.vue";
+import {onMounted} from "vue";
+
+const router = useRouter()
+onMounted(() => {
+  console.log(router.options.routes, 'routes')
+})
 </script>
 
 <template>
@@ -20,35 +25,26 @@ import IconTooling from "./icons/IconTooling.vue";
       </el-header>
       <el-container>
         <el-aside class="el-aside-left" width="255px">
-          <ul class="ps-5 pt-2">
-            <li>
-              <router-link to="/">主页</router-link>
-            </li>
-            <li>
-              <router-link to="pacypay">收银台支付</router-link>
-            </li>
-            <li>
-              <router-link to="sdk">JS-SDK收银台</router-link>
-            </li>
-            <li>
-              <router-link to="extended">两方接口支付</router-link>
-            </li>
-          </ul>
+          <tree-menu :menu-items="router.options.routes" :depth="0"></tree-menu>
         </el-aside>
         <el-container>
-          <el-main class="px-lg-5">
-            <h1>Documentation</h1>
-            <p class="mt-4">Before you start developing Alipay products and solutions, familiarize yourself with our
-              latest
-              documentation including developer guides, API reference, code samples, and more.</p>
-            <div class="notice d-flex bg-primary-subtle px-4 py-2">
-              <icon-tooling/>
-              <div class="notice-content ms-2">
-                <p>
-                  See <a href="https://global.alipay.com/docs/ac/legacy/legacydoc">Legacy documentation</a> for previous versions of Alipay documentation, including product docs, APIs, and release notes on Cross-border Payment Services, Face-to-face Payment Services, and others.
-                </p>
+          <el-main class="index-main">
+            <article class="index-content">
+              <h3>Documentation</h3>
+              <p class="mt-4">Before you start developing Alipay products and solutions, familiarize yourself with our
+                latest documentation <br>including developer guides, API reference, code samples, and more.</p>
+              <div class="notice d-flex bg-primary-subtle px-4 py-2">
+                <icon-tooling/>
+                <div class="notice-content ms-2">
+                  <p>
+                    See
+                    <a href="https://global.alipay.com/docs/ac/legacy/legacydoc">Legacy documentation</a>
+                    for previous versions of Alipay documentation, including product docs, APIs, and release notes on
+                    Cross-border Payment Services, Face-to-face Payment Services, and others.
+                  </p>
+                </div>
               </div>
-            </div>
+            </article>
           </el-main>
 
           <el-footer>Footer</el-footer>
@@ -88,7 +84,6 @@ import IconTooling from "./icons/IconTooling.vue";
   align-items: center;
   justify-content: space-between;
   height: 65px;
-  padding-left: 24px;
 }
 
 .fixed-layout {
@@ -96,5 +91,9 @@ import IconTooling from "./icons/IconTooling.vue";
   top: 0;
   left: 0;
   right: 0;
+}
+
+.index-main {
+  padding: 0 200px;
 }
 </style>
