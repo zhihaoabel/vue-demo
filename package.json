@@ -16,6 +16,8 @@
     "bootstrap-icons": "^1.11.1",
     "crypto-js": "^4.1.1",
     "element-plus": "^2.3.14",
+    "highlight.js": "^11.9.0",
+    "marked": "^10.0.0",
     "pinia": "^2.1.7",
     "vue": "^3.3.4",
     "vue-cryptojs": "^2.4.3",
@@ -24,7 +26,10 @@
   "devDependencies": {
     "@playwright/test": "^1.38.0",
     "@vitejs/plugin-vue": "^4.3.4",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
     "sass": "^1.69.0",
+    "tailwindcss": "^3.3.6",
     "unplugin-auto-import": "^0.16.6",
     "unplugin-vue-components": "^0.25.2",
     "vite": "^4.4.9"

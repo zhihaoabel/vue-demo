@@ -4,6 +4,7 @@ import IconTooling from "./icons/IconTooling.vue";
 import {useRouter} from "vue-router";
 import TreeMenu from "@/components/menu/TreeMenu.vue";
 import {onMounted} from "vue";
+import Marked from "@/components/markdown/Marked.vue";
 
 const router = useRouter()
 onMounted(() => {
@@ -45,6 +46,7 @@ onMounted(() => {
                 </div>
               </div>
             </article>
+            <Marked></Marked>
           </el-main>
 
           <el-footer>Footer</el-footer>

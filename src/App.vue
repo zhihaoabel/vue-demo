@@ -5,6 +5,7 @@ import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import {ref} from "vue";
 import LoadingComponent from "@/components/loading/LoadingComponent.vue";
+import './index.css';
 
 const showHome = ref(false);
 
